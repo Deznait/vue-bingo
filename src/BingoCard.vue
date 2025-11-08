@@ -2,17 +2,26 @@
   <div class="bingo-card">
     <table>
       <tbody>
-        <BingoRow v-for="(row, index) in card" :key="index" :row="row" :numerosExtraidos="numerosExtraidos"/>
+        <BingoRow
+          v-for="(row, index) in card"
+          :key="index"
+          :row="row"
+          :numerosExtraidos="numerosExtraidos"
+        />
       </tbody>
     </table>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import BingoRow from './BingoRow.vue';
 
-defineProps({ numerosExtraidos: Array });
+defineProps({
+  numerosExtraidos: Array,
+});
+
+const card = ref([]);
 
 function generateCard() {
   // Paso 1: Generar 3 números únicos por cada una de las 9 columnas
@@ -67,7 +76,9 @@ function generateCard() {
   return card;
 }
 
-const card = ref(generateCard());
+onMounted(() => {
+  card.value = generateCard();
+});
 </script>
 
 <style lang="scss" scoped>

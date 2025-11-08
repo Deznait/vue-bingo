@@ -19,10 +19,10 @@ const props = defineProps({
 });
 
 const isEmpty = computed(() => props.value === null);
-const isMarked = computed(() => props.value !== null && props.numerosExtraidos.includes(props.value));
-
+const isMarked = computed(
+  () => props.value !== null && props.numerosExtraidos.includes(props.value),
+);
 </script>
-
 
 <style lang="scss" scoped>
 td {
@@ -54,7 +54,7 @@ td {
 
   &.marcado {
     background-color: #007900;
-    color: #FFF;
+    color: #fff;
   }
 }
 </style>

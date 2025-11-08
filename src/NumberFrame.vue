@@ -1,5 +1,5 @@
 <template>
-  <button id="sacar-numero" @click="sacarNumero">Sacar número</button>
+  <button id="sacar-numero" class="boton boton--verde" @click="sacarNumero">Sacar número</button>
 
   <div class="numeros-seleccionados">
     <span v-for="(n, i) in reversedNumeros" :key="i" class="bola">
@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, defineExpose } from 'vue';
 import { defineEmits } from 'vue';
 
 const emit = defineEmits(['nuevo-numero']);
@@ -29,6 +29,15 @@ function sacarNumero() {
   numeros.value.push(nuevo);
   emit('nuevo-numero', nuevo);
 }
+
+function reiniciarNumeros() {
+  numeros.value = [];
+}
+
+// 👇 Esto permite que App.vue pueda llamar a reiniciarNumeros()
+defineExpose({
+  reiniciarNumeros
+});
 </script>
 
 <style lang="scss" scoped>
@@ -54,7 +63,7 @@ $color-bg: #f0c040;
     &:first-of-type {
       background-color: $color-bg;
       font-weight: bold;
-}
+    }
   }
 }
 </style>
