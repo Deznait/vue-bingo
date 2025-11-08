@@ -1,25 +1,28 @@
 <template>
-  <td :class="{ empty: isEmpty }">
+  <td :class="{ empty: isEmpty, marcado: isMarked }">
     {{ isEmpty ? '' : value }}
   </td>
 </template>
 
-<script>
-export default {
-  name: 'BingoCell',
-  props: {
-    value: {
-      type: [Number, null],
-      default: null,
-    },
+<script setup>
+import { computed } from 'vue';
+
+const props = defineProps({
+  value: {
+    type: [Number, null],
+    default: null,
   },
-  computed: {
-    isEmpty() {
-      return this.value === null
-    },
+  numerosExtraidos: {
+    type: Array,
+    default: () => [],
   },
-}
+});
+
+const isEmpty = computed(() => props.value === null);
+const isMarked = computed(() => props.value !== null && props.numerosExtraidos.includes(props.value));
+
 </script>
+
 
 <style lang="scss" scoped>
 td {
@@ -47,6 +50,11 @@ td {
       background-color: #000;
       transform: none;
     }
+  }
+
+  &.marcado {
+    background-color: #007900;
+    color: #FFF;
   }
 }
 </style>

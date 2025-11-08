@@ -1,16 +1,28 @@
 <template>
-  <div id="app">
-    <BingoCard />
-  </div>
+  <BingoCard :numerosExtraidos="numerosExtraidos" />
+  <NumberFrame @nuevo-numero="agregarNumero" />
 </template>
 
-<script>
-import BingoCard from './BingoCard.vue'
+<script setup>
+import { ref } from 'vue';
 
-export default {
-  name: 'App',
-  components: {
-    BingoCard,
-  },
+import BingoCard from './BingoCard.vue';
+import NumberFrame from './NumberFrame.vue';
+
+const numerosExtraidos = ref([]);
+
+function agregarNumero(n) {
+  if (!numerosExtraidos.value.includes(n)) {
+    numerosExtraidos.value.push(n);
+  }
 }
 </script>
+
+<style lang="scss">
+#app {
+  font-family: Arial, Helvetica, sans-serif;
+  max-width: 60rem;
+  margin: 0 auto;
+  font-size: 1.5rem;
+}
+</style>

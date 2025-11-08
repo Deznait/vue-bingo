@@ -1,20 +1,14 @@
 <template>
   <tr>
-    <BingoCell v-for="(cell, index) in row" :key="index" :value="cell" />
+    <BingoCell v-for="(cell, index) in row" :key="index" :value="cell" :numerosExtraidos="numerosExtraidos"/>
   </tr>
 </template>
 
-<script>
-import BingoCell from './BingoCell.vue'
-
-export default {
-  name: 'BingoRow',
-  components: { BingoCell },
-  props: {
-    row: {
-      type: Array,
-      required: true,
-    },
-  },
-}
+<script setup>
+import BingoCell from './BingoCell.vue';
+defineProps({
+  row: Array,
+  numerosExtraidos: Array
+});
 </script>
+

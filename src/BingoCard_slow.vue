@@ -2,7 +2,7 @@
   <div class="bingo-card">
     <table>
       <tbody>
-        <BingoRow v-for="(row, index) in card" :key="index" :row="row" :numerosExtraidos="numerosExtraidos"/>
+        <BingoRow v-for="(row, index) in card" :key="index" :row="row" />
       </tbody>
     </table>
   </div>
@@ -11,8 +11,6 @@
 <script setup>
 import { ref } from 'vue';
 import BingoRow from './BingoRow.vue';
-
-defineProps({ numerosExtraidos: Array });
 
 function generateCard() {
   // Paso 1: Generar 3 números únicos por cada una de las 9 columnas
@@ -30,40 +28,60 @@ function generateCard() {
     // Alternar orden: columnas pares descendente, impares ascendente
     return i % 2 === 0 ? nums.sort((a, b) => a - b) : nums.sort((a, b) => b - a);
   });
-  //console.log('columns', JSON.parse(JSON.stringify(columns)))
+  console.log('columns', JSON.parse(JSON.stringify(columns)));
 
   // Paso 2: Inicializar matriz vacía 3x9
   const card = Array.from({ length: 3 }, () => Array(9).fill(null));
+  console.log('card', JSON.parse(JSON.stringify(card)));
 
   // Paso 3: Asignar 2 números a 6 columnas, y 1 número a 3 columnas
   const colIndices = Array.from({ length: 9 }, (_, i) => i);
   const colsWithTwo = colIndices.sort(() => 0.5 - Math.random()).slice(0, 6);
+  console.log('colsWithTwo', JSON.parse(JSON.stringify(colsWithTwo)));
 
   const colsWithOne = colIndices.filter((i) => !colsWithTwo.includes(i));
+  console.log('colsWithOne', JSON.parse(JSON.stringify(colsWithOne)));
 
-  // Contador de números por fila para asegurar que cada una tenga exactamente 5
-  const rowCounts = [0, 0, 0];
-
-  // Función auxiliar para colocar números en filas válidas
-  function placeNumber(col, count) {
-    // Filas disponibles que aún no tienen 5 números y no tienen número en esta columna
-    const availableRows = [0, 1, 2].filter((r) => card[r][col] === null && rowCounts[r] < 5);
-
-    for (let i = 0; i < count; i++) {
-      // Seleccionar una fila aleatoria entre las disponibles
-      const row = availableRows.splice(Math.floor(Math.random() * availableRows.length), 1)[0];
-
-      // Colocar el número en la celda correspondiente
+  // Paso 4: Distribuir números por columna
+  for (const col of colsWithTwo) {
+    for (let i = 0; i < 2; i++) {
+      let row;
+      do {
+        row = Math.floor(Math.random() * 3);
+      } while (card[row][col] !== null);
+      console.log(
+        'row: ' +
+          JSON.parse(JSON.stringify(row)) +
+          ' column: ' +
+          JSON.parse(JSON.stringify(col)) +
+          ' value: ',
+        columns[col],
+      );
+      console.log(' ');
       card[row][col] = columns[col][row];
-      rowCounts[row]++;
     }
   }
 
-  // Paso 4: Distribuir los números en el cartón respetando las reglas
-  colsWithTwo.forEach((col) => placeNumber(col, 2)); // Colocar 2 números en 6 columnas
-  colsWithOne.forEach((col) => placeNumber(col, 1)); // Colocar 1 número en 3 columnas
+  for (const col of colsWithOne) {
+    let row;
+    do {
+      row = Math.floor(Math.random() * 3);
+    } while (card[row][col] !== null);
+    card[row][col] = columns[col].pop();
+  }
+
+  // Paso 5: Validar que cada fila tenga 5 números
+  for (let row = 0; row < 3; row++) {
+    const filled = card[row].filter((cell) => cell !== null).length;
+    if (filled !== 5) {
+      // Si no cumple, regenerar todo
+      return generateCard();
+    }
+  }
 
   // El cartón ya cumple todas las reglas: 5 números por fila, 1–2 por columna
+  console.log('card', JSON.parse(JSON.stringify(card)));
+  console.log(' ');
   return card;
 }
 
@@ -77,9 +95,10 @@ $empty-bg: #000;
 $hover-bg: #f0c040;
 
 table {
+  font-family: Arial, Helvetica, sans-serif;
   border-collapse: collapse;
+  margin: 30px auto;
   font-size: 1.5rem;
-  width: 100%;
 
   td {
     border: 2px solid $bingo-border;
